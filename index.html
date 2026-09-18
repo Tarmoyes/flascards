@@ -275,8 +275,8 @@ textarea:focus{border-color:var(--accent);}
 
 <!-- LANG SWITCH -->
 <div class="lang-switch">
-  <button class="lang-btn active" id="btnLangEN" onclick="switchLang('en')">🇬🇧 Eesti–Inglise</button>
-  <button class="lang-btn" id="btnLangRU" onclick="switchLang('ru')">🇷🇺 Eesti–Vene</button>
+  <button class="lang-btn active" id="btnLangEN" onclick="switchLang('en')">🇬🇧 Est–Ing</button>
+  <button class="lang-btn" id="btnLangRU" onclick="switchLang('ru')">🇷🇺 Est–Vene</button>
 </div>
 
 <!-- SOUND TOGGLE -->
@@ -1091,7 +1091,7 @@ function restartSession() { buildDeck(); }
 // ── MODAL ──────────────────────────────────────────────────────────────────
 function openModal() {
   document.getElementById('modalTitle').textContent =
-    lang === 'en' ? 'Eesti–Inglise sõnad' : 'Eesti–Vene sõnad';
+    lang === 'en' ? 'Est–Ing sõnad' : 'Est–Vene sõnad';
   renderListAll(); renderListHard();
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
