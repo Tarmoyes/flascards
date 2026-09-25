@@ -259,6 +259,7 @@ textarea:focus{border-color:var(--accent);}
 .sound-toggle{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--text-muted);
   margin-bottom:14px;cursor:pointer;user-select:none;}
 .sound-toggle input{accent-color:var(--accent2);width:16px;height:16px;cursor:pointer;}
+.sound-toggle-group{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;}
 
 @media(max-width:400px){
   .card-word{font-size:1.7rem;}
@@ -275,15 +276,23 @@ textarea:focus{border-color:var(--accent);}
 
 <!-- LANG SWITCH -->
 <div class="lang-switch">
-  <button class="lang-btn active" id="btnLangEN" onclick="switchLang('en')">🇬🇧 Est–Ing</button>
-  <button class="lang-btn" id="btnLangRU" onclick="switchLang('ru')">🇷🇺 Est–Vene</button>
+  <button class="lang-btn active" id="btnLangEN" onclick="switchLang('en')">Est–Ing</button>
+  <button class="lang-btn" id="btnLangENET" onclick="switchLang('en-et')">Ing–Est</button>
+  <button class="lang-btn" id="btnLangRU" onclick="switchLang('ru')">Est–Vene</button>
+  <button class="lang-btn" id="btnLangRUET" onclick="switchLang('ru-et')">Vene–Est</button>
 </div>
 
 <!-- SOUND TOGGLE -->
-<label class="sound-toggle">
-  <input type="checkbox" id="soundToggle" checked>
-  🔊 Hääl sees
-</label>
+<div class="sound-toggle-group">
+  <label class="sound-toggle">
+    <input type="checkbox" id="frontSoundToggle" checked>
+    🔊 Alguse sõna
+  </label>
+  <label class="sound-toggle">
+    <input type="checkbox" id="backSoundToggle" checked>
+    🔊 Tähendus
+  </label>
+</div>
 
 <!-- FILTER TABS -->
 <div class="filter-tabs">
@@ -411,11 +420,11 @@ textarea:focus{border-color:var(--accent);}
 
 <script>
 // ── STATE ──────────────────────────────────────────────────────────────────
-let lang    = 'en'; // 'en' | 'ru'
+let lang    = 'en'; // 'en' | 'en-et' | 'ru' | 'ru-et'
 let filter  = 'all'; // 'all' | 'easy' | 'hard'
 
 // Per-language storage
-function storageKey(k) { return `fc_${lang}_${k}`; }
+function storageKey(k) { return `fc_${lang === 'ru' || lang === 'ru-et' ? 'ru' : 'en'}_${k}`; }
 function loadWords()       { return JSON.parse(localStorage.getItem(storageKey('words')) || '[]'); }
 function loadHardKeys()     { return JSON.parse(localStorage.getItem(storageKey('hard'))  || '[]'); }
 function loadEasyKeys()     { return JSON.parse(localStorage.getItem(storageKey('easy'))  || '[]'); }
@@ -431,6 +440,12 @@ let easyKeys     = loadEasyKeys();
 let masteredKeys = loadMasteredKeys();
 let counts       = loadCounts();
 let wrongCounts  = loadWrongCounts();
+
+function isReversedDirection() { return lang === 'en-et' || lang === 'ru-et'; }
+function cardFrontValue(word) { return word ? (isReversedDirection() ? word.tgt : word.src) : ''; }
+function cardBackValue(word)  { return word ? (isReversedDirection() ? word.src : word.tgt) : ''; }
+function cardFrontSpeechCode() { return isReversedDirection() ? (lang === 'ru-et' ? 'ru-RU' : 'en-GB') : 'et-EE'; }
+function cardBackSpeechCode()  { return isReversedDirection() ? 'et-EE' : (lang === 'ru' ? 'ru-RU' : 'en-GB'); }
 
 function saveAll() {
   localStorage.setItem(storageKey('words'),       JSON.stringify(words));
@@ -489,7 +504,9 @@ async function registerOfflineSupport() {
 function switchLang(l) {
   lang = l;
   document.getElementById('btnLangEN').classList.toggle('active', l === 'en');
+  document.getElementById('btnLangENET').classList.toggle('active', l === 'en-et');
   document.getElementById('btnLangRU').classList.toggle('active', l === 'ru');
+  document.getElementById('btnLangRUET').classList.toggle('active', l === 'ru-et');
   words        = loadWords();
   hardKeys     = loadHardKeys();
   easyKeys     = loadEasyKeys();
@@ -610,13 +627,16 @@ function showCurrent() {
     const w = deck[currentIdx];
     const frontEl = document.getElementById('cardFrontWord');
     const backEl  = document.getElementById('cardBackWord');
-    frontEl.textContent = w.src;
-    frontEl.classList.toggle('phrase', w.src.length > 20);
+    const frontValue = cardFrontValue(w);
+    const backValue = cardBackValue(w);
+    frontEl.textContent = frontValue;
+    frontEl.classList.toggle('phrase', frontValue.length > 20);
     backEl.textContent  = '';
     setTimeout(() => {
-      backEl.textContent = w.tgt;
-      backEl.classList.toggle('phrase', w.tgt.length > 20);
+      backEl.textContent = backValue;
+      backEl.classList.toggle('phrase', backValue.length > 20);
     }, 500);
+    if (frontSoundOn()) setTimeout(() => speakFront(), 150);
     updateBackBtn();
 
     // Eesti sõna ei öelda häälega
@@ -627,8 +647,9 @@ function showCurrent() {
     const w = deck[currentIdx];
     if (w) {
       const el = document.getElementById('cardFrontWord');
-      el.textContent = w.src;
-      el.classList.toggle('phrase', w.src.length > 20);
+      const frontValue = cardFrontValue(w);
+      el.textContent = frontValue;
+      el.classList.toggle('phrase', frontValue.length > 20);
     }
     ci.addEventListener('transitionend', doLoad, { once: true });
     ci.classList.remove('flipped');
@@ -641,28 +662,27 @@ function updateBackBtn() {
   document.getElementById('btnBack').disabled = history.length === 0;
 }
 
-function soundOn() { return document.getElementById('soundToggle').checked; }
+function frontSoundOn() { return document.getElementById('frontSoundToggle').checked; }
+function backSoundOn() { return document.getElementById('backSoundToggle').checked; }
 
 // ── CARD CLICK ─────────────────────────────────────────────────────────────
 function cardClick() {
   if (busy || currentIdx >= deck.length || !deck.length) return;
   isFlipped = !isFlipped;
   document.getElementById('cardInner').classList.toggle('flipped', isFlipped);
-  if (isFlipped && soundOn() && lang === 'en') {
+  if (isFlipped && backSoundOn()) {
     setTimeout(() => speakBack(), 550);
   }
 }
 
 function speakFront() {
-  if (lang !== 'en') return; // ainult inglise režiimis
   const w = deck[currentIdx];
-  if (w) speak(w.src, 'et-EE');
+  if (w) speak(cardFrontValue(w), cardFrontSpeechCode());
 }
 
 function speakBack() {
-  if (lang !== 'en') return; // ainult inglise režiimis
   const w = deck[currentIdx];
-  if (w) speak(w.tgt, 'en-GB');
+  if (w) speak(cardBackValue(w), cardBackSpeechCode());
 }
 
 // ── ANSWERS ────────────────────────────────────────────────────────────────
@@ -788,11 +808,11 @@ function flipThenWait(cb) {
     isFlipped = true;
     document.getElementById('cardInner').classList.add('flipped');
     setTimeout(() => {
-      if (soundOn() && lang === 'en') speak(deck[currentIdx]?.tgt, 'en-GB');
+      if (backSoundOn()) speak(cardBackValue(deck[currentIdx]), cardBackSpeechCode());
       startCountdown(cb);
     }, 540);
   } else {
-    if (soundOn() && lang === 'en') speak(deck[currentIdx]?.tgt, 'en-GB');
+    if (backSoundOn()) speak(cardBackValue(deck[currentIdx]), cardBackSpeechCode());
     startCountdown(cb);
   }
 }
@@ -876,7 +896,7 @@ function toggleMic() {
   if (!SpeechRecognition) { showToast('Sinu brauser ei toeta mikrofoni!'); return; }
 
   recognition = new SpeechRecognition();
-  recognition.lang = lang === 'en' ? 'en-GB' : 'ru-RU';
+  recognition.lang = cardBackSpeechCode();
   recognition.interimResults = false;
   recognition.maxAlternatives = 5;
 
@@ -889,7 +909,7 @@ function toggleMic() {
 
   recognition.onresult = (e) => {
     const alts = Array.from(e.results[0]).map(a => a.transcript.trim().toLowerCase());
-    const correct = deck[currentIdx].tgt.toLowerCase().trim();
+    const correct = cardBackValue(deck[currentIdx]).toLowerCase().trim();
     const matched = alts.some(a => similarity(a, correct) > 0.75);
     stopMic();
     handleVoiceResult(matched, alts[0]);
@@ -929,8 +949,8 @@ function handleVoiceResult(correct, heard) {
 
   // show result overlay
   setTimeout(() => {
-    showVoiceResult(correct, heard, w.tgt);
-    if (soundOn() && lang === 'en') speak(w.tgt, 'en-GB');
+    showVoiceResult(correct, heard, cardBackValue(w));
+    if (backSoundOn()) speak(cardBackValue(w), cardBackSpeechCode());
 
     startCountdown(() => {
       hideVoiceResult();
@@ -1091,7 +1111,7 @@ function restartSession() { buildDeck(); }
 // ── MODAL ──────────────────────────────────────────────────────────────────
 function openModal() {
   document.getElementById('modalTitle').textContent =
-    lang === 'en' ? 'Est–Ing sõnad' : 'Est–Vene sõnad';
+    lang === 'ru' || lang === 'ru-et' ? 'Eesti–Vene sõnad' : 'Eesti–Inglise sõnad';
   renderListAll(); renderListHard();
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -1125,9 +1145,10 @@ function switchTab(tab) {
 let singleDir = 'et'; // 'et' = top is Estonian; 'foreign' = top is foreign lang
 
 function updateSingleDirUI() {
-  const tgtName = lang === 'en' ? 'Inglise' : 'Vene';
-  const tgtFlag = lang === 'en' ? '🇬🇧' : '🇷🇺';
-  const isEtTop = singleDir === 'et';
+  const isRussian = lang === 'ru' || lang === 'ru-et';
+  const tgtName = isRussian ? 'Vene' : 'Inglise';
+  const tgtFlag = isRussian ? '🇷🇺' : '🇬🇧';
+  const isEtTop = isReversedDirection() ? singleDir !== 'et' : singleDir === 'et';
   document.getElementById('labelTop').textContent = isEtTop ? '🇪🇪 Eesti' : `${tgtFlag} ${tgtName}`;
   document.getElementById('labelBot').textContent = isEtTop ? `${tgtFlag} ${tgtName}` : '🇪🇪 Eesti';
   document.getElementById('singleInput').placeholder = isEtTop ? 'Eesti sõna või lause' : `${tgtName} sõna või lause`;
@@ -1153,8 +1174,9 @@ function addSingleManual() {
   const topVal = document.getElementById('singleInput').value.trim();
   const botVal = document.getElementById('singleTgt').value.trim();
   if (!topVal || !botVal) return;
-  const src = singleDir === 'et' ? topVal : botVal;
-  const tgt = singleDir === 'et' ? botVal : topVal;
+  const topIsEt = isReversedDirection() ? singleDir !== 'et' : singleDir === 'et';
+  const src = topIsEt ? topVal : botVal;
+  const tgt = topIsEt ? botVal : topVal;
   if (!words.find(w => w.src === src && w.tgt === tgt)) {
     words.push({ src, tgt });
     saveAll();
@@ -1178,8 +1200,9 @@ async function translateSingle() {
   btn.disabled = true;
   btn.textContent = '...';
 
-  const foreignCode = lang === 'en' ? 'en' : 'ru';
-  const langpair = singleDir === 'et' ? `et|${foreignCode}` : `${foreignCode}|et`;
+  const foreignCode = lang === 'ru' || lang === 'ru-et' ? 'ru' : 'en';
+  const topIsEt = isReversedDirection() ? singleDir !== 'et' : singleDir === 'et';
+  const langpair = topIsEt ? `et|${foreignCode}` : `${foreignCode}|et`;
 
   try {
     const resp = await fetch('https://api.mymemory.translated.net/get?' + new URLSearchParams({ q: word, langpair }));
