@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Sõnakaardid</title>
+<title>SÃµnakaardid</title>
 <meta name="theme-color" content="#f5f0e8">
 <link rel="manifest" href="manifest.webmanifest">
 <style>
@@ -271,32 +271,32 @@ textarea:focus{border-color:var(--accent);}
 </head>
 <body>
 
-<h1>Sõnakaardid</h1>
-<p class="subtitle">Õpi uusi sõnu mängides</p>
+<h1>SÃµnakaardid</h1>
+<p class="subtitle">Ã•pi uusi sÃµnu mÃ¤ngides</p>
 
 <!-- LANG SWITCH -->
 <div class="lang-switch">
-  <button class="lang-btn active" id="btnLangEN" onclick="switchLang('en')">Est–Ing</button>
-  <button class="lang-btn" id="btnLangENET" onclick="switchLang('en-et')">Ing–Est</button>
-  <button class="lang-btn" id="btnLangRU" onclick="switchLang('ru')">Est–Vene</button>
-  <button class="lang-btn" id="btnLangRUET" onclick="switchLang('ru-et')">Vene–Est</button>
+  <button class="lang-btn active" id="btnLangEN" onclick="switchLang('en')">Estâ€“Ing</button>
+  <button class="lang-btn" id="btnLangENET" onclick="switchLang('en-et')">Ingâ€“Est</button>
+  <button class="lang-btn" id="btnLangRU" onclick="switchLang('ru')">Estâ€“Vene</button>
+  <button class="lang-btn" id="btnLangRUET" onclick="switchLang('ru-et')">Veneâ€“Est</button>
 </div>
 
 <!-- SOUND TOGGLE -->
 <div class="sound-toggle-group">
   <label class="sound-toggle">
     <input type="checkbox" id="frontSoundToggle" checked>
-    🔊 Alguse sõna
+    ðŸ”Š Alguse sÃµna
   </label>
   <label class="sound-toggle">
     <input type="checkbox" id="backSoundToggle" checked>
-    🔊 Tähendus
+    ðŸ”Š TÃ¤hendus
   </label>
 </div>
 
 <!-- FILTER TABS -->
 <div class="filter-tabs">
-  <button class="filter-tab active" id="ftAll"       onclick="setFilter('all')">Kõik<span class="badge" id="badgeAll">0</span></button>
+  <button class="filter-tab active" id="ftAll"       onclick="setFilter('all')">KÃµik<span class="badge" id="badgeAll">0</span></button>
   <button class="filter-tab"        id="ftEasy"      onclick="setFilter('easy')">Kerge<span class="badge" id="badgeEasy">0</span></button>
   <button class="filter-tab"        id="ftHard"      onclick="setFilter('hard')">Raske<span class="badge" id="badgeHard">0</span></button>
   <button class="filter-tab"        id="ftMastered"  onclick="setFilter('mastered')">Tean<span class="badge" id="badgeMastered">0</span></button>
@@ -304,9 +304,9 @@ textarea:focus{border-color:var(--accent);}
 
 <!-- STATS -->
 <div class="stats-bar">
-  <span>Järel: <b id="statLeft">0</b></span>
-  <span>✓ <b id="statKnow">0</b></span>
-  <span>✗ <b id="statDont">0</b></span>
+  <span>JÃ¤rel: <b id="statLeft">0</b></span>
+  <span>âœ“ <b id="statKnow">0</b></span>
+  <span>âœ— <b id="statDont">0</b></span>
 </div>
 
 <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
@@ -315,12 +315,12 @@ textarea:focus{border-color:var(--accent);}
 <div class="card-area" id="cardArea" onclick="cardClick()">
   <div class="card-inner" id="cardInner">
     <div class="card-face card-front">
-      <div class="card-word" id="cardFrontWord">—</div>
-      <button class="card-sound" onclick="event.stopPropagation();speakFront()" title="Kuula">🔊</button>
+      <div class="card-word" id="cardFrontWord">â€”</div>
+      <button class="card-sound" onclick="event.stopPropagation();speakFront()" title="Kuula">ðŸ”Š</button>
     </div>
     <div class="card-face card-back">
-      <div class="card-word" id="cardBackWord">—</div>
-      <button class="card-sound" onclick="event.stopPropagation();speakBack()" title="Kuula">🔊</button>
+      <div class="card-word" id="cardBackWord">â€”</div>
+      <button class="card-sound" onclick="event.stopPropagation();speakBack()" title="Kuula">ðŸ”Š</button>
       <svg class="countdown-ring" id="countdownRing" viewBox="0 0 28 28">
         <circle cx="14" cy="14" r="11"/>
       </svg>
@@ -333,63 +333,63 @@ textarea:focus{border-color:var(--accent);}
 </div>
 
 <div class="no-cards" id="noCards" style="display:none">
-  <span>📚</span>
-  Lisa sõnad alustamiseks!
+  <span>ðŸ“š</span>
+  Lisa sÃµnad alustamiseks!
 </div>
 
 <div class="done-screen" id="doneScreen">
-  <div class="done-icon">🎉</div>
-  <div class="done-title">Kaardid läbi!</div>
+  <div class="done-icon">ðŸŽ‰</div>
+  <div class="done-title">Kaardid lÃ¤bi!</div>
   <div class="done-sub" id="doneText"></div>
   <div class="done-actions">
-    <button class="btn-restart" onclick="restartSession()">↺ Uuesti</button>
-    <button class="btn-practice-hard" id="btnPracticeHard" onclick="setFilter('hard')">✗ Õpi raskeid</button>
+    <button class="btn-restart" onclick="restartSession()">â†º Uuesti</button>
+    <button class="btn-practice-hard" id="btnPracticeHard" onclick="setFilter('hard')">âœ— Ã•pi raskeid</button>
   </div>
 </div>
 
 <!-- EI TEA / TEAN -->
 <div class="btn-row" id="btnRow">
-  <button class="btn btn-dontknow" id="btnDontKnow" onclick="dontKnow()">✗ Ei tea</button>
-  <button class="btn btn-know"     id="btnKnow"     onclick="know()">✓ Tean</button>
+  <button class="btn btn-dontknow" id="btnDontKnow" onclick="dontKnow()">âœ— Ei tea</button>
+  <button class="btn btn-know"     id="btnKnow"     onclick="know()">âœ“ Tean</button>
 </div>
 
 <!-- MIC -->
 <div class="action-row" id="actionRow">
-  <button class="btn-mic" id="btnMic" onclick="toggleMic()">🎤 Vasta häälega</button>
+  <button class="btn-mic" id="btnMic" onclick="toggleMic()">ðŸŽ¤ Vasta hÃ¤Ã¤lega</button>
 </div>
 
 <!-- BACK + LISA -->
 <div class="nav-row" id="navRow">
-  <button class="btn-back" id="btnBack" onclick="goBack()" disabled>← Tagasi</button>
-  <button class="btn-open-add" onclick="openModal()">+ Lisa sõnad</button>
+  <button class="btn-back" id="btnBack" onclick="goBack()" disabled>â† Tagasi</button>
+  <button class="btn-open-add" onclick="openModal()">+ Lisa sÃµnad</button>
 </div>
 
 <!-- ===== MODAL ===== -->
 <div class="modal-overlay" id="modalOverlay" onclick="overlayClick(event)">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title" id="modalTitle">Sõnade haldus</div>
-      <button class="btn-close-modal" onclick="closeModal()">✕</button>
+      <div class="modal-title" id="modalTitle">SÃµnade haldus</div>
+      <button class="btn-close-modal" onclick="closeModal()">âœ•</button>
     </div>
 
     <div class="modal-tabs">
-      <button class="modal-tab active" onclick="switchTab('single')">Sõna / lause</button>
+      <button class="modal-tab active" onclick="switchTab('single')">SÃµna / lause</button>
       <button class="modal-tab" onclick="switchTab('bulk')">Nimekiri</button>
-      <button class="modal-tab" onclick="switchTab('all')">Kõik</button>
+      <button class="modal-tab" onclick="switchTab('all')">KÃµik</button>
       <button class="modal-tab" onclick="switchTab('hard')">Rasked</button>
     </div>
 
     <!-- SINGLE WORD + AUTO TRANSLATE -->
     <div class="tab-panel active" id="tabSingle">
-      <span class="single-lang-label" id="labelTop">🇪🇪 Eesti</span>
+      <span class="single-lang-label" id="labelTop">ðŸ‡ªðŸ‡ª Eesti</span>
       <div class="single-input-wrap" style="margin-bottom:0;">
-        <input class="single-input" id="singleInput" type="text" placeholder="Eesti sõna või lause" oninput="singleInputChanged()" onkeydown="if(event.key==='Enter')document.getElementById('singleTgt').focus()">
-        <button class="btn-translate" id="btnTranslate" onclick="translateSingle()">Tõlgi</button>
+        <input class="single-input" id="singleInput" type="text" placeholder="Eesti sÃµna vÃµi lause" oninput="singleInputChanged()" onkeydown="if(event.key==='Enter')document.getElementById('singleTgt').focus()">
+        <button class="btn-translate" id="btnTranslate" onclick="translateSingle()">TÃµlgi</button>
       </div>
-      <button class="btn-swap-dir" onclick="swapSingleDir()">⇄ vaheta suund</button>
-      <span class="single-lang-label" id="labelBot">🇬🇧 Inglise</span>
+      <button class="btn-swap-dir" onclick="swapSingleDir()">â‡„ vaheta suund</button>
+      <span class="single-lang-label" id="labelBot">ðŸ‡¬ðŸ‡§ Inglise</span>
       <div class="single-input-wrap">
-        <input class="single-input" id="singleTgt" type="text" placeholder="Tõlge" oninput="singleInputChanged()" onkeydown="if(event.key==='Enter')addSingleManual()">
+        <input class="single-input" id="singleTgt" type="text" placeholder="TÃµlge" oninput="singleInputChanged()" onkeydown="if(event.key==='Enter')addSingleManual()">
       </div>
       <div class="translate-offline-note" id="translateOfflineNote" style="margin:6px 0 10px;"></div>
       <button class="btn-add" id="btnAddSingle" onclick="addSingleManual()" disabled>+ Lisa kaardile</button>
@@ -397,20 +397,20 @@ textarea:focus{border-color:var(--accent);}
 
     <!-- BULK -->
     <div class="tab-panel" id="tabBulk">
-      <textarea id="bulkInput" placeholder="koer - dog&#10;kass - cat&#10;ma ei tea - I don't know&#10;Kuidas läheb? - How are you?"></textarea>
-      <div class="sep-info">Eraldaja: <code> - </code> (tühik, kriips, tühik). Lausetes võib olla muid märke (punkt, kaldkriips jne).</div>
-      <button class="btn-add" onclick="addBulk()">+ Lisa sõnad</button>
+      <textarea id="bulkInput" placeholder="koer - dog&#10;kass - cat&#10;ma ei tea - I don't know&#10;Kuidas lÃ¤heb? - How are you?"></textarea>
+      <div class="sep-info">Eraldaja: <code> - </code> (tÃ¼hik, kriips, tÃ¼hik). Lausetes vÃµib olla muid mÃ¤rke (punkt, kaldkriips jne).</div>
+      <button class="btn-add" onclick="addBulk()">+ Lisa sÃµnad</button>
     </div>
 
     <!-- ALL WORDS -->
     <div class="tab-panel" id="tabAll">
-      <div class="list-section-title">Kõik sõnad</div>
+      <div class="list-section-title">KÃµik sÃµnad</div>
       <div class="word-list" id="wordListAll"></div>
     </div>
 
     <!-- HARD WORDS -->
     <div class="tab-panel" id="tabHard">
-      <div class="list-section-title">Rasked sõnad</div>
+      <div class="list-section-title">Rasked sÃµnad</div>
       <div class="word-list" id="wordListHard"></div>
     </div>
   </div>
@@ -419,7 +419,7 @@ textarea:focus{border-color:var(--accent);}
 <div class="toast" id="toast"></div>
 
 <script>
-// ── STATE ──────────────────────────────────────────────────────────────────
+// â”€â”€ STATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let lang    = 'en'; // 'en' | 'en-et' | 'ru' | 'ru-et'
 let filter  = 'all'; // 'all' | 'easy' | 'hard'
 
@@ -477,8 +477,8 @@ function updateConnectivityUI() {
 
   if (status) {
     status.textContent = online
-      ? 'Rakendus on online. Pärast esimest laadimist peaks see avanema ka ilma netita.'
-      : 'Oled offline. Olemasolevad kaardid töötavad edasi, aga automaattõlge vajab internetti.';
+      ? 'Rakendus on online. PÃ¤rast esimest laadimist peaks see avanema ka ilma netita.'
+      : 'Oled offline. Olemasolevad kaardid tÃ¶Ã¶tavad edasi, aga automaattÃµlge vajab internetti.';
     status.classList.toggle('offline', !online);
   }
 
@@ -487,7 +487,7 @@ function updateConnectivityUI() {
   if (note) {
     note.textContent = online
       ? ''
-      : 'Offline — automaattõlge ei tööta, sisesta tõlge käsitsi.';
+      : 'Offline â€” automaattÃµlge ei tÃ¶Ã¶ta, sisesta tÃµlge kÃ¤sitsi.';
   }
 }
 
@@ -500,7 +500,7 @@ async function registerOfflineSupport() {
   }
 }
 
-// ── LANG SWITCH ────────────────────────────────────────────────────────────
+// â”€â”€ LANG SWITCH â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function switchLang(l) {
   lang = l;
   document.getElementById('btnLangEN').classList.toggle('active', l === 'en');
@@ -520,7 +520,7 @@ function switchLang(l) {
   updateSingleDirUI();
 }
 
-// ── FILTER ─────────────────────────────────────────────────────────────────
+// â”€â”€ FILTER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function setFilter(f, skipBuild) {
   filter = f;
   ['all','easy','hard','mastered'].forEach(x => {
@@ -535,20 +535,20 @@ function getDeck() {
   if (filter === 'mastered') return words.filter(w => masteredKeys.includes(w.src));
   if (filter === 'hard') return words.filter(w => hardKeys.includes(w.src));
   if (filter === 'easy') return words.filter(w => easyKeys.includes(w.src));
-  // 'all' = neutraalsed sõnad (pole kerged, rasked ega 10x teatud)
+  // 'all' = neutraalsed sÃµnad (pole kerged, rasked ega 5x teatud)
   return words.filter(w => !hardKeys.includes(w.src) && !easyKeys.includes(w.src) && !masteredKeys.includes(w.src));
 }
 
-// ── BUILD DECK ─────────────────────────────────────────────────────────────
+// â”€â”€ BUILD DECK â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function buildDeck() {
   // Paranda counts iga seansi alguses
   words.forEach(w => {
     const c = counts[w.src] || 0;
-    if (c >= 10) {
+    if (c >= 5) {
       if (!masteredKeys.includes(w.src)) masteredKeys.push(w.src);
       easyKeys = easyKeys.filter(k => k !== w.src);
       hardKeys = hardKeys.filter(k => k !== w.src);
-      counts[w.src] = 10;
+      counts[w.src] = 5;
     } else if (c >= 3) {
       // count>=3 -> lisa easyKeys
       if (!easyKeys.includes(w.src)) easyKeys.push(w.src);
@@ -556,7 +556,7 @@ function buildDeck() {
       masteredKeys = masteredKeys.filter(k => k !== w.src);
       counts[w.src] = 3;
     }
-    // Neutraalsete sõnade count SÄILIB sessioonide vahel - ei nulli!
+    // Neutraalsete sÃµnade count SÃ„ILIB sessioonide vahel - ei nulli!
   });
   saveAll();
 
@@ -573,7 +573,7 @@ function buildDeck() {
   showCurrent();
 }
 
-// ── SHOW CARD ──────────────────────────────────────────────────────────────
+// â”€â”€ SHOW CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function showCurrent() {
   const ci      = document.getElementById('cardInner');
   const area    = document.getElementById('cardArea');
@@ -588,7 +588,7 @@ function showCurrent() {
   isFlipped = false;
   busy      = false;
 
-  // Kui kaart on pööratud, pööra tagasi ja oota animatsiooni lõppu
+  // Kui kaart on pÃ¶Ã¶ratud, pÃ¶Ã¶ra tagasi ja oota animatsiooni lÃµppu
   const doLoad = () => {
     const src = getDeck();
 
@@ -611,7 +611,7 @@ function showCurrent() {
       actRow.style.display = 'none';
       navRow.style.display = 'flex';
       document.getElementById('doneText').textContent =
-        `Teadsid ${knowCount} / ${deck.length} sõna õigesti 🎯`;
+        `Teadsid ${knowCount} / ${deck.length} sÃµna Ãµigesti ðŸŽ¯`;
       document.getElementById('btnPracticeHard').disabled = hardKeys.length === 0;
       updateBackBtn();
       return;
@@ -639,11 +639,11 @@ function showCurrent() {
     if (frontSoundOn()) setTimeout(() => speakFront(), 150);
     updateBackBtn();
 
-    // Eesti sõna ei öelda häälega
+    // Eesti sÃµna ei Ã¶elda hÃ¤Ã¤lega
   };
 
   if (ci.classList.contains('flipped')) {
-    // Uuenda esikülg ENNE flipi — nähtav kohe kui kaart tagasi pöördub
+    // Uuenda esikÃ¼lg ENNE flipi â€” nÃ¤htav kohe kui kaart tagasi pÃ¶Ã¶rdub
     const w = deck[currentIdx];
     if (w) {
       const el = document.getElementById('cardFrontWord');
@@ -665,7 +665,7 @@ function updateBackBtn() {
 function frontSoundOn() { return document.getElementById('frontSoundToggle').checked; }
 function backSoundOn() { return document.getElementById('backSoundToggle').checked; }
 
-// ── CARD CLICK ─────────────────────────────────────────────────────────────
+// â”€â”€ CARD CLICK â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function cardClick() {
   if (busy || currentIdx >= deck.length || !deck.length) return;
   isFlipped = !isFlipped;
@@ -685,7 +685,7 @@ function speakBack() {
   if (w) speak(cardBackValue(w), cardBackSpeechCode());
 }
 
-// ── ANSWERS ────────────────────────────────────────────────────────────────
+// â”€â”€ ANSWERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function know() {
   if (busy || currentIdx >= deck.length || !deck.length) return;
   busy = true;
@@ -694,12 +694,12 @@ function know() {
   const wasMastered = filter === 'mastered' && masteredKeys.includes(src);
   const doNext = () => {
     if (wasMastered) {
-      moveWordBackToHard(src, 'Sõna läks uuesti raskete hulka 🔁');
+      moveWordBackToHard(src, 'SÃµna lÃ¤ks uuesti raskete hulka ðŸ”');
       history.push({ idx: currentIdx, result: 'know', wasMastered: true });
     } else {
       markCorrect(src);
       history.push({ idx: currentIdx, result: 'know', wasMastered: false });
-      showToast('Tubli! ✓');
+      showToast('Tubli! âœ“');
     }
     knowCount++; currentIdx++;
     updateStats(); showCurrent();
@@ -717,11 +717,11 @@ function dontKnow() {
   const wasMastered = filter === 'mastered' && masteredKeys.includes(src);
   const doNext = () => {
     if (wasMastered) {
-      moveWordBackToHard(src, 'Sõna läks uuesti raskete hulka 🔁');
+      moveWordBackToHard(src, 'SÃµna lÃ¤ks tagasi "KÃµik" alla ðŸ”„', true);
       history.push({ idx: currentIdx, result: 'dont', wasMastered: true, wasInHard: true, wrongCountBefore: 0 });
     } else {
       const movedToNeutral = markWrong(src);
-      if (movedToNeutral) showToast('3x ei tea — sõna läks tagasi "Kõik" alla 📚');
+      if (movedToNeutral) showToast('3x ei tea â€” sÃµna lÃ¤ks tagasi "KÃµik" alla ðŸ“š');
       history.push({ idx: currentIdx, result: 'dont', wasMastered: false, wasInHard, wrongCountBefore });
     }
     dontCount++; currentIdx++;
@@ -739,16 +739,21 @@ function moveWordToMastered(src) {
   masteredKeys = masteredKeys.includes(src) ? masteredKeys : [...masteredKeys, src];
   easyKeys = easyKeys.filter(k => k !== src);
   hardKeys = hardKeys.filter(k => k !== src);
-  counts[src] = 10;
+  counts[src] = 5;
   wrongCounts[src] = 0;
   saveAll();
   updateBadges();
 }
 
-function moveWordBackToHard(src, toastText) {
+function moveWordBackToHard(src, toastText, resetToAll = false) {
   masteredKeys = masteredKeys.filter(k => k !== src);
-  hardKeys = hardKeys.includes(src) ? hardKeys : [...hardKeys, src];
-  easyKeys = easyKeys.filter(k => k !== src);
+  if (resetToAll) {
+    hardKeys = hardKeys.filter(k => k !== src);
+    easyKeys = easyKeys.filter(k => k !== src);
+  } else {
+    hardKeys = hardKeys.includes(src) ? hardKeys : [...hardKeys, src];
+    easyKeys = easyKeys.filter(k => k !== src);
+  }
   counts[src] = 0;
   wrongCounts[src] = 0;
   saveAll();
@@ -759,7 +764,7 @@ function moveWordBackToHard(src, toastText) {
 function markCorrect(src) {
   wrongCounts[src] = 0;
   counts[src] = (counts[src] || 0) + 1;
-  if (counts[src] >= 10) {
+  if (counts[src] >= 5) {
     moveWordToMastered(src);
     return;
   }
@@ -776,15 +781,15 @@ function markCorrect(src) {
 // Returns true if word was moved from hard back to neutral (3x wrong in hard)
 function markWrong(src) {
   if (masteredKeys.includes(src)) {
-    moveWordBackToHard(src, 'Sõna läks uuesti raskete hulka 🔁');
-    return false;
+    moveWordBackToHard(src, 'SÃµna lÃ¤ks tagasi "KÃµik" alla ðŸ”„', true);
+    return true;
   }
   counts[src] = 0;
   if (hardKeys.includes(src)) {
     // Juba raskes: loenda kui palju kordi "ei tea" on vastatud
     wrongCounts[src] = (wrongCounts[src] || 0) + 1;
     if (wrongCounts[src] >= 3) {
-      // 3x ei tea rasketes -> tagasi kõik alla
+      // 3x ei tea rasketes -> tagasi kÃµik alla
       hardKeys = hardKeys.filter(k => k !== src);
       wrongCounts[src] = 0;
       saveAll();
@@ -802,7 +807,7 @@ function markWrong(src) {
   return false;
 }
 
-// flip → speak back → 2s → next
+// flip â†’ speak back â†’ 2s â†’ next
 function flipThenWait(cb) {
   if (!isFlipped) {
     isFlipped = true;
@@ -836,7 +841,7 @@ function stopCountdown() {
   setBtns(true);
 }
 
-// ── BACK ───────────────────────────────────────────────────────────────────
+// â”€â”€ BACK â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function goBack() {
   if (!history.length || busy) return;
   stopCountdown();
@@ -848,7 +853,7 @@ function goBack() {
       masteredKeys = masteredKeys.includes(src) ? masteredKeys : [...masteredKeys, src];
       hardKeys = hardKeys.filter(k => k !== src);
       easyKeys = easyKeys.filter(k => k !== src);
-      counts[src] = 10;
+      counts[src] = 5;
     } else {
       counts[src] = Math.max(0, (counts[src] || 1) - 1);
       if (counts[src] < 3) easyKeys = easyKeys.filter(k => k !== src);
@@ -862,16 +867,16 @@ function goBack() {
       masteredKeys = masteredKeys.includes(src) ? masteredKeys : [...masteredKeys, src];
       hardKeys = hardKeys.filter(k => k !== src);
       easyKeys = easyKeys.filter(k => k !== src);
-      counts[src] = 10;
+      counts[src] = 5;
       wrongCounts[src] = 0;
     } else {
       counts[src] = 0;
       if (prev.wasInHard) {
-        // Sõna oli juba raskes: taasta wrongCounts ja vajadusel lisa tagasi rasketesse
+        // SÃµna oli juba raskes: taasta wrongCounts ja vajadusel lisa tagasi rasketesse
         wrongCounts[src] = prev.wrongCountBefore;
         if (!hardKeys.includes(src)) hardKeys.push(src);
       } else {
-        // Sõna polnud raskes: eemalda rasketest
+        // SÃµna polnud raskes: eemalda rasketest
         hardKeys = hardKeys.filter(k => k !== src);
         wrongCounts[src] = 0;
       }
@@ -884,7 +889,7 @@ function goBack() {
   showCurrent();
 }
 
-// ── VOICE INPUT ────────────────────────────────────────────────────────────
+// â”€â”€ VOICE INPUT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let recognition = null;
 let micActive   = false;
 
@@ -903,7 +908,7 @@ function toggleMic() {
   recognition.onstart = () => {
     micActive = true;
     const btn = document.getElementById('btnMic');
-    btn.textContent = '⏹ Peata';
+    btn.textContent = 'â¹ Peata';
     btn.classList.add('listening');
   };
 
@@ -928,7 +933,7 @@ function toggleMic() {
 function stopMic() {
   micActive = false;
   const btn = document.getElementById('btnMic');
-  btn.textContent = '🎤 Vasta häälega';
+  btn.textContent = 'ðŸŽ¤ Vasta hÃ¤Ã¤lega';
   btn.classList.remove('listening');
   try { recognition && recognition.stop(); } catch(e) {}
 }
@@ -956,7 +961,7 @@ function handleVoiceResult(correct, heard) {
       hideVoiceResult();
       if (correct) {
         if (wasMastered) {
-          moveWordBackToHard(w.src, 'Sõna läks uuesti raskete hulka 🔁');
+          moveWordBackToHard(w.src, 'SÃµna lÃ¤ks uuesti raskete hulka ðŸ”');
           history.push({ idx: currentIdx, result: 'know', wasMastered: true });
         } else {
           markCorrect(w.src);
@@ -965,13 +970,13 @@ function handleVoiceResult(correct, heard) {
         knowCount++;
       } else {
         if (wasMastered) {
-          moveWordBackToHard(w.src, 'Sõna läks uuesti raskete hulka 🔁');
+          moveWordBackToHard(w.src, 'SÃµna lÃ¤ks tagasi "KÃµik" alla ðŸ”„', true);
           history.push({ idx: currentIdx, result: 'dont', wasMastered: true, wasInHard: true, wrongCountBefore: 0 });
         } else {
           const wasInHard = hardKeys.includes(w.src);
           const wrongCountBefore = wrongCounts[w.src] || 0;
           const movedToNeutral = markWrong(w.src);
-          if (movedToNeutral) showToast('3x ei tea — sõna läks tagasi "Kõik" alla 📚');
+          if (movedToNeutral) showToast('3x ei tea â€” sÃµna lÃ¤ks tagasi "KÃµik" alla ðŸ“š');
           history.push({ idx: currentIdx, result: 'dont', wasMastered: false, wasInHard, wrongCountBefore });
         }
         dontCount++;
@@ -988,10 +993,10 @@ function showVoiceResult(correct, heard, expected) {
   const icon = document.getElementById('voiceIcon');
   const text = document.getElementById('voiceText');
   el.className = 'voice-result show ' + (correct ? 'correct' : 'wrong');
-  icon.textContent = correct ? '✓' : '✗';
+  icon.textContent = correct ? 'âœ“' : 'âœ—';
   text.textContent = correct
-    ? 'Õige! Hästi tehtud!'
-    : `Sa ütlesid: "${heard}" · Õige: "${expected}"`;
+    ? 'Ã•ige! HÃ¤sti tehtud!'
+    : `Sa Ã¼tlesid: "${heard}" Â· Ã•ige: "${expected}"`;
 }
 
 function hideVoiceResult() {
@@ -1009,7 +1014,7 @@ function similarity(a, b) {
   return 1 - dp[la][lb] / Math.max(la,lb);
 }
 
-// ── TTS ────────────────────────────────────────────────────────────────────
+// â”€â”€ TTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let voiceCache = {};
 
 function getBestVoice(langCode, preferFemale) {
@@ -1060,7 +1065,7 @@ function speak(text, langCode) {
     window.speechSynthesis.speak(u);
   };
 
-  // Voices might not be loaded yet — wait if needed
+  // Voices might not be loaded yet â€” wait if needed
   if (window.speechSynthesis.getVoices().length === 0) {
     window.speechSynthesis.onvoiceschanged = () => {
       voiceCache = {}; // reset cache
@@ -1072,9 +1077,9 @@ function speak(text, langCode) {
   }
 }
 
-// ── STATS ──────────────────────────────────────────────────────────────────
+// â”€â”€ STATS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function updateStats() {
-  // Järel = deck järelejäänud kaardid, aga mitte rohkem kui aktiivse filtri badge
+  // JÃ¤rel = deck jÃ¤relejÃ¤Ã¤nud kaardid, aga mitte rohkem kui aktiivse filtri badge
   const deckLeft = Math.max(0, deck.length - currentIdx);
   const hard = hardKeys.filter(k => words.find(w => w.src === k)).length;
   const easy = easyKeys.filter(k => words.find(w => w.src === k)).length;
@@ -1094,8 +1099,8 @@ function updateStats() {
 }
 
 function updateBadges() {
-  // Badge'id näitavad kategooriate koguseid — ei muutu kaarte kasutades
-  // Muutuvad ainult kui sõna liigub kategooriasse (markCorrect/markWrong)
+  // Badge'id nÃ¤itavad kategooriate koguseid â€” ei muutu kaarte kasutades
+  // Muutuvad ainult kui sÃµna liigub kategooriasse (markCorrect/markWrong)
   const hard     = hardKeys.filter(k => words.find(w => w.src === k)).length;
   const easy     = easyKeys.filter(k => words.find(w => w.src === k)).length;
   const mastered = masteredKeys.filter(k => words.find(w => w.src === k)).length;
@@ -1108,10 +1113,10 @@ function updateBadges() {
 
 function restartSession() { buildDeck(); }
 
-// ── MODAL ──────────────────────────────────────────────────────────────────
+// â”€â”€ MODAL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function openModal() {
   document.getElementById('modalTitle').textContent =
-    lang === 'ru' || lang === 'ru-et' ? 'Eesti–Vene sõnad' : 'Eesti–Inglise sõnad';
+    lang === 'ru' || lang === 'ru-et' ? 'Eestiâ€“Vene sÃµnad' : 'Eestiâ€“Inglise sÃµnad';
   renderListAll(); renderListHard();
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -1141,18 +1146,18 @@ function switchTab(tab) {
   }
 }
 
-// ── SINGLE ADD ─────────────────────────────────────────────────────────────
+// â”€â”€ SINGLE ADD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let singleDir = 'et'; // 'et' = top is Estonian; 'foreign' = top is foreign lang
 
 function updateSingleDirUI() {
   const isRussian = lang === 'ru' || lang === 'ru-et';
   const tgtName = isRussian ? 'Vene' : 'Inglise';
-  const tgtFlag = isRussian ? '🇷🇺' : '🇬🇧';
+  const tgtFlag = isRussian ? 'ðŸ‡·ðŸ‡º' : 'ðŸ‡¬ðŸ‡§';
   const isEtTop = isReversedDirection() ? singleDir !== 'et' : singleDir === 'et';
-  document.getElementById('labelTop').textContent = isEtTop ? '🇪🇪 Eesti' : `${tgtFlag} ${tgtName}`;
-  document.getElementById('labelBot').textContent = isEtTop ? `${tgtFlag} ${tgtName}` : '🇪🇪 Eesti';
-  document.getElementById('singleInput').placeholder = isEtTop ? 'Eesti sõna või lause' : `${tgtName} sõna või lause`;
-  document.getElementById('singleTgt').placeholder   = isEtTop ? `${tgtName} tõlge` : 'Eesti tõlge';
+  document.getElementById('labelTop').textContent = isEtTop ? 'ðŸ‡ªðŸ‡ª Eesti' : `${tgtFlag} ${tgtName}`;
+  document.getElementById('labelBot').textContent = isEtTop ? `${tgtFlag} ${tgtName}` : 'ðŸ‡ªðŸ‡ª Eesti';
+  document.getElementById('singleInput').placeholder = isEtTop ? 'Eesti sÃµna vÃµi lause' : `${tgtName} sÃµna vÃµi lause`;
+  document.getElementById('singleTgt').placeholder   = isEtTop ? `${tgtName} tÃµlge` : 'Eesti tÃµlge';
 }
 
 function swapSingleDir() {
@@ -1182,7 +1187,7 @@ function addSingleManual() {
     saveAll();
     renderListAll();
     buildDeck();
-    showToast(`Lisatud: ${src} → ${tgt}`);
+    showToast(`Lisatud: ${src} â†’ ${tgt}`);
   } else {
     showToast('See paar on juba olemas!');
   }
@@ -1194,8 +1199,8 @@ function addSingleManual() {
 
 async function translateSingle() {
   const word = document.getElementById('singleInput').value.trim();
-  if (!word) { showToast('Sisesta sõna või lause'); return; }
-  if (!isOnline()) { showToast('Automaatne tõlge vajab internetti'); return; }
+  if (!word) { showToast('Sisesta sÃµna vÃµi lause'); return; }
+  if (!isOnline()) { showToast('Automaatne tÃµlge vajab internetti'); return; }
   const btn = document.getElementById('btnTranslate');
   btn.disabled = true;
   btn.textContent = '...';
@@ -1212,14 +1217,14 @@ async function translateSingle() {
     document.getElementById('singleTgt').value = translation;
     singleInputChanged();
   } catch(e) {
-    showToast('Automaattõlge ebaõnnestus — sisesta tõlge käsitsi');
+    showToast('AutomaattÃµlge ebaÃµnnestus â€” sisesta tÃµlge kÃ¤sitsi');
   }
 
   btn.disabled = !isOnline();
-  btn.textContent = 'Tõlgi';
+  btn.textContent = 'TÃµlgi';
 }
 
-// ── BULK ADD ───────────────────────────────────────────────────────────────
+// â”€â”€ BULK ADD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function parsePairs(text) {
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
   const pairs = [];
@@ -1250,11 +1255,11 @@ function addBulk() {
   const text = document.getElementById('bulkInput').value;
   const { pairs, invalid } = parsePairs(text);
   if (!pairs.length) {
-    showToast('Kasuta formaati: tekst - tõlge  (tühikud kriipsu ümber!)');
+    showToast('Kasuta formaati: tekst - tÃµlge  (tÃ¼hikud kriipsu Ã¼mber!)');
     return;
   }
   if (invalid.length) {
-    showToast(`Vigane rida ${invalid[0]}: kasuta  tekst - tõlge  (tühikud kriipsu ümber)`);
+    showToast(`Vigane rida ${invalid[0]}: kasuta  tekst - tÃµlge  (tÃ¼hikud kriipsu Ã¼mber)`);
     return;
   }
   let added = 0;
@@ -1265,28 +1270,28 @@ function addBulk() {
   document.getElementById('bulkInput').value = '';
   renderListAll();
   buildDeck();
-  showToast(`Lisatud ${added} sõnapaari!`);
+  showToast(`Lisatud ${added} sÃµnapaari!`);
 }
 
-// ── RENDER LISTS ───────────────────────────────────────────────────────────
+// â”€â”€ RENDER LISTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function renderListAll() {
   const el = document.getElementById('wordListAll');
-  if (!words.length) { el.innerHTML = '<div class="empty-list">Sõnu pole lisatud</div>'; return; }
+  if (!words.length) { el.innerHTML = '<div class="empty-list">SÃµnu pole lisatud</div>'; return; }
   el.innerHTML = words.map((w,i) => `
     <div class="word-item">
       <div class="word-pair">
         <input class="word-edit src" value="${esc(w.src)}" data-i="${i}" data-field="src"
           onblur="saveWordEdit(this)" onkeydown="if(event.key==='Enter')this.nextElementSibling.nextElementSibling.focus()">
-        <span class="word-sep">→</span>
+        <span class="word-sep">â†’</span>
         <input class="word-edit tgt" value="${esc(w.tgt)}" data-i="${i}" data-field="tgt"
           onblur="saveWordEdit(this)" onkeydown="if(event.key==='Enter')this.blur()">
         ${easyKeys.includes(w.src) ? '<span class="easy-badge">kerge</span>' : ''}
         ${hardKeys.includes(w.src) ? '<span class="hard-badge">raske</span>' : ''}
-        ${masteredKeys.includes(w.src) ? '<span class="mastered-badge">10x</span>' : ''}
+        ${masteredKeys.includes(w.src) ? '<span class="mastered-badge">5x</span>' : ''}
       </div>
-      <button class="btn-delete" onclick="removeWord(${i})">✕</button>
+      <button class="btn-delete" onclick="removeWord(${i})">âœ•</button>
     </div>`).join('');
 }
 
@@ -1315,15 +1320,15 @@ function saveWordEdit(input) {
 function renderListHard() {
   const el = document.getElementById('wordListHard');
   const hard = words.filter(w => hardKeys.includes(w.src));
-  if (!hard.length) { el.innerHTML = '<div class="empty-list">Raskeid sõnu pole</div>'; return; }
+  if (!hard.length) { el.innerHTML = '<div class="empty-list">Raskeid sÃµnu pole</div>'; return; }
   el.innerHTML = hard.map(w => `
     <div class="word-item">
       <div class="word-pair">
         <span class="word-src">${esc(w.src)}</span>
-        <span class="word-sep">→</span>
+        <span class="word-sep">â†’</span>
         <span class="word-tgt">${esc(w.tgt)}</span>
       </div>
-      <button class="btn-delete" onclick="removeHardWord('${esc(w.src)}')">✕</button>
+      <button class="btn-delete" onclick="removeHardWord('${esc(w.src)}')">âœ•</button>
     </div>`).join('');
 }
 
@@ -1343,7 +1348,7 @@ function removeHardWord(src) {
   saveAll(); renderListAll(); renderListHard(); updateBadges();
 }
 
-// ── TOAST ──────────────────────────────────────────────────────────────────
+// â”€â”€ TOAST â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let toastTimer;
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -1353,7 +1358,7 @@ function showToast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
 }
 
-// ── INIT ───────────────────────────────────────────────────────────────────
+// â”€â”€ INIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 window.addEventListener('online', updateConnectivityUI);
 window.addEventListener('offline', updateConnectivityUI);
 registerOfflineSupport();
@@ -1363,3 +1368,4 @@ buildDeck();
 </script>
 </body>
 </html>
+
