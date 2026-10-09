@@ -241,6 +241,8 @@ textarea:focus{border-color:var(--accent);}
   padding:2px 7px;font-weight:500;flex-shrink:0;}
 .easy-badge{font-size:.7rem;background:#edfaf3;color:var(--know);border-radius:20px;
   padding:2px 7px;font-weight:500;flex-shrink:0;}
+.mastered-badge{font-size:.7rem;background:#e8f2ff;color:#3d6aa6;border-radius:20px;
+  padding:2px 7px;font-weight:500;flex-shrink:0;}
 .btn-delete{background:none;border:none;color:#ccc;cursor:pointer;font-size:.9rem;
   padding:2px 6px;border-radius:7px;transition:color .15s,background .15s;flex-shrink:0;margin-left:auto;}
 .btn-delete:hover{color:var(--dontknow);background:#fef0f0;}
@@ -257,6 +259,7 @@ textarea:focus{border-color:var(--accent);}
 .sound-toggle{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--text-muted);
   margin-bottom:14px;cursor:pointer;user-select:none;}
 .sound-toggle input{accent-color:var(--accent2);width:16px;height:16px;cursor:pointer;}
+.sound-toggle-group{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;}
 
 @media(max-width:400px){
   .card-word{font-size:1.7rem;}
@@ -270,25 +273,33 @@ textarea:focus{border-color:var(--accent);}
 
 <h1>Sõnakaardid</h1>
 <p class="subtitle">Õpi uusi sõnu mängides</p>
-<div class="app-status" id="appStatus">Laadi see leht korra internetiga lahti, siis saab seda hiljem kasutada ka ilma netita.</div>
 
 <!-- LANG SWITCH -->
 <div class="lang-switch">
-  <button class="lang-btn active" id="btnLangEN" onclick="switchLang('en')">🇬🇧 Eesti–Inglise</button>
-  <button class="lang-btn" id="btnLangRU" onclick="switchLang('ru')">🇷🇺 Eesti–Vene</button>
+  <button class="lang-btn active" id="btnLangEN" onclick="switchLang('en')">Est–Ing</button>
+  <button class="lang-btn" id="btnLangENET" onclick="switchLang('en-et')">Ing–Est</button>
+  <button class="lang-btn" id="btnLangRU" onclick="switchLang('ru')">Est–Vene</button>
+  <button class="lang-btn" id="btnLangRUET" onclick="switchLang('ru-et')">Vene–Est</button>
 </div>
 
 <!-- SOUND TOGGLE -->
-<label class="sound-toggle">
-  <input type="checkbox" id="soundToggle" checked>
-  🔊 Hääl sees
-</label>
+<div class="sound-toggle-group">
+  <label class="sound-toggle">
+    <input type="checkbox" id="frontSoundToggle" checked>
+    🔊 Alguse sõna
+  </label>
+  <label class="sound-toggle">
+    <input type="checkbox" id="backSoundToggle" checked>
+    🔊 Tähendus
+  </label>
+</div>
 
 <!-- FILTER TABS -->
 <div class="filter-tabs">
-  <button class="filter-tab active" id="ftAll"  onclick="setFilter('all')">Kõik<span class="badge" id="badgeAll">0</span></button>
-  <button class="filter-tab"        id="ftEasy" onclick="setFilter('easy')">Kerged<span class="badge" id="badgeEasy">0</span></button>
-  <button class="filter-tab"        id="ftHard" onclick="setFilter('hard')">Rasked<span class="badge" id="badgeHard">0</span></button>
+  <button class="filter-tab active" id="ftAll"       onclick="setFilter('all')">Kõik<span class="badge" id="badgeAll">0</span></button>
+  <button class="filter-tab"        id="ftEasy"      onclick="setFilter('easy')">Kerge<span class="badge" id="badgeEasy">0</span></button>
+  <button class="filter-tab"        id="ftHard"      onclick="setFilter('hard')">Raske<span class="badge" id="badgeHard">0</span></button>
+  <button class="filter-tab"        id="ftMastered"  onclick="setFilter('mastered')">Tean<span class="badge" id="badgeMastered">0</span></button>
 </div>
 
 <!-- STATS -->
@@ -409,29 +420,40 @@ textarea:focus{border-color:var(--accent);}
 
 <script>
 // ── STATE ──────────────────────────────────────────────────────────────────
-let lang    = 'en'; // 'en' | 'ru'
+let lang    = 'en'; // 'en' | 'en-et' | 'ru' | 'ru-et'
 let filter  = 'all'; // 'all' | 'easy' | 'hard'
+const EASY_CORRECT_THRESHOLD = 3;
+const MASTERED_CORRECT_THRESHOLD = EASY_CORRECT_THRESHOLD + 5;
 
 // Per-language storage
-function storageKey(k) { return `fc_${lang}_${k}`; }
-function loadWords()    { return JSON.parse(localStorage.getItem(storageKey('words')) || '[]'); }
-function loadHardKeys() { return JSON.parse(localStorage.getItem(storageKey('hard'))  || '[]'); }
-function loadEasyKeys() { return JSON.parse(localStorage.getItem(storageKey('easy'))  || '[]'); }
+function storageKey(k) { return `fc_${lang === 'ru' || lang === 'ru-et' ? 'ru' : 'en'}_${k}`; }
+function loadWords()       { return JSON.parse(localStorage.getItem(storageKey('words')) || '[]'); }
+function loadHardKeys()     { return JSON.parse(localStorage.getItem(storageKey('hard'))  || '[]'); }
+function loadEasyKeys()     { return JSON.parse(localStorage.getItem(storageKey('easy'))  || '[]'); }
+function loadMasteredKeys() { return JSON.parse(localStorage.getItem(storageKey('mastered')) || '[]'); }
 // correctCounts: {src: number}
 function loadCounts()       { return JSON.parse(localStorage.getItem(storageKey('counts'))      || '{}'); }
 // wrongCounts: how many times answered "ei tea" while already in hardKeys
 function loadWrongCounts()  { return JSON.parse(localStorage.getItem(storageKey('wrongcounts')) || '{}'); }
 
-let words       = loadWords();
-let hardKeys    = loadHardKeys();
-let easyKeys    = loadEasyKeys();
-let counts      = loadCounts();
-let wrongCounts = loadWrongCounts();
+let words        = loadWords();
+let hardKeys     = loadHardKeys();
+let easyKeys     = loadEasyKeys();
+let masteredKeys = loadMasteredKeys();
+let counts       = loadCounts();
+let wrongCounts  = loadWrongCounts();
+
+function isReversedDirection() { return lang === 'en-et' || lang === 'ru-et'; }
+function cardFrontValue(word) { return word ? (isReversedDirection() ? word.tgt : word.src) : ''; }
+function cardBackValue(word)  { return word ? (isReversedDirection() ? word.src : word.tgt) : ''; }
+function cardFrontSpeechCode() { return isReversedDirection() ? (lang === 'ru-et' ? 'ru-RU' : 'en-GB') : 'et-EE'; }
+function cardBackSpeechCode()  { return isReversedDirection() ? 'et-EE' : (lang === 'ru' ? 'ru-RU' : 'en-GB'); }
 
 function saveAll() {
   localStorage.setItem(storageKey('words'),       JSON.stringify(words));
   localStorage.setItem(storageKey('hard'),        JSON.stringify(hardKeys));
   localStorage.setItem(storageKey('easy'),        JSON.stringify(easyKeys));
+  localStorage.setItem(storageKey('mastered'),    JSON.stringify(masteredKeys));
   localStorage.setItem(storageKey('counts'),      JSON.stringify(counts));
   localStorage.setItem(storageKey('wrongcounts'), JSON.stringify(wrongCounts));
 }
@@ -484,12 +506,15 @@ async function registerOfflineSupport() {
 function switchLang(l) {
   lang = l;
   document.getElementById('btnLangEN').classList.toggle('active', l === 'en');
+  document.getElementById('btnLangENET').classList.toggle('active', l === 'en-et');
   document.getElementById('btnLangRU').classList.toggle('active', l === 'ru');
-  words       = loadWords();
-  hardKeys    = loadHardKeys();
-  easyKeys    = loadEasyKeys();
-  counts      = loadCounts();
-  wrongCounts = loadWrongCounts();
+  document.getElementById('btnLangRUET').classList.toggle('active', l === 'ru-et');
+  words        = loadWords();
+  hardKeys     = loadHardKeys();
+  easyKeys     = loadEasyKeys();
+  masteredKeys = loadMasteredKeys();
+  counts       = loadCounts();
+  wrongCounts  = loadWrongCounts();
   filter   = 'all';
   setFilter('all', true);
   updateBadges();
@@ -500,7 +525,7 @@ function switchLang(l) {
 // ── FILTER ─────────────────────────────────────────────────────────────────
 function setFilter(f, skipBuild) {
   filter = f;
-  ['all','easy','hard'].forEach(x => {
+  ['all','easy','hard','mastered'].forEach(x => {
     document.getElementById('ft'+cap(x)).classList.toggle('active', x === f);
   });
   if (!skipBuild) buildDeck();
@@ -509,10 +534,11 @@ function setFilter(f, skipBuild) {
 function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
 function getDeck() {
+  if (filter === 'mastered') return words.filter(w => masteredKeys.includes(w.src));
   if (filter === 'hard') return words.filter(w => hardKeys.includes(w.src));
   if (filter === 'easy') return words.filter(w => easyKeys.includes(w.src));
-  // 'all' = neutraalsed sõnad (pole kerged ega rasked)
-  return words.filter(w => !hardKeys.includes(w.src) && !easyKeys.includes(w.src));
+  // 'all' = neutraalsed sõnad (pole kerged, rasked ega täielikult õpitud)
+  return words.filter(w => !hardKeys.includes(w.src) && !easyKeys.includes(w.src) && !masteredKeys.includes(w.src));
 }
 
 // ── BUILD DECK ─────────────────────────────────────────────────────────────
@@ -520,11 +546,16 @@ function buildDeck() {
   // Paranda counts iga seansi alguses
   words.forEach(w => {
     const c = counts[w.src] || 0;
-    if (c >= 3) {
+    if (masteredKeys.includes(w.src) || c >= MASTERED_CORRECT_THRESHOLD) {
+      if (!masteredKeys.includes(w.src)) masteredKeys.push(w.src);
+      easyKeys = easyKeys.filter(k => k !== w.src);
+      hardKeys = hardKeys.filter(k => k !== w.src);
+      counts[w.src] = MASTERED_CORRECT_THRESHOLD;
+    } else if (c >= 3) {
       // count>=3 -> lisa easyKeys
       if (!easyKeys.includes(w.src)) easyKeys.push(w.src);
       hardKeys = hardKeys.filter(k => k !== w.src);
-      counts[w.src] = 3;
+      masteredKeys = masteredKeys.filter(k => k !== w.src);
     }
     // Neutraalsete sõnade count SÄILIB sessioonide vahel - ei nulli!
   });
@@ -597,13 +628,16 @@ function showCurrent() {
     const w = deck[currentIdx];
     const frontEl = document.getElementById('cardFrontWord');
     const backEl  = document.getElementById('cardBackWord');
-    frontEl.textContent = w.src;
-    frontEl.classList.toggle('phrase', w.src.length > 20);
+    const frontValue = cardFrontValue(w);
+    const backValue = cardBackValue(w);
+    frontEl.textContent = frontValue;
+    frontEl.classList.toggle('phrase', frontValue.length > 20);
     backEl.textContent  = '';
     setTimeout(() => {
-      backEl.textContent = w.tgt;
-      backEl.classList.toggle('phrase', w.tgt.length > 20);
+      backEl.textContent = backValue;
+      backEl.classList.toggle('phrase', backValue.length > 20);
     }, 500);
+    if (frontSoundOn()) setTimeout(() => speakFront(), 150);
     updateBackBtn();
 
     // Eesti sõna ei öelda häälega
@@ -614,8 +648,9 @@ function showCurrent() {
     const w = deck[currentIdx];
     if (w) {
       const el = document.getElementById('cardFrontWord');
-      el.textContent = w.src;
-      el.classList.toggle('phrase', w.src.length > 20);
+      const frontValue = cardFrontValue(w);
+      el.textContent = frontValue;
+      el.classList.toggle('phrase', frontValue.length > 20);
     }
     ci.addEventListener('transitionend', doLoad, { once: true });
     ci.classList.remove('flipped');
@@ -628,28 +663,27 @@ function updateBackBtn() {
   document.getElementById('btnBack').disabled = history.length === 0;
 }
 
-function soundOn() { return document.getElementById('soundToggle').checked; }
+function frontSoundOn() { return document.getElementById('frontSoundToggle').checked; }
+function backSoundOn() { return document.getElementById('backSoundToggle').checked; }
 
 // ── CARD CLICK ─────────────────────────────────────────────────────────────
 function cardClick() {
   if (busy || currentIdx >= deck.length || !deck.length) return;
   isFlipped = !isFlipped;
   document.getElementById('cardInner').classList.toggle('flipped', isFlipped);
-  if (isFlipped && soundOn() && lang === 'en') {
+  if (isFlipped && backSoundOn()) {
     setTimeout(() => speakBack(), 550);
   }
 }
 
 function speakFront() {
-  if (lang !== 'en') return; // ainult inglise režiimis
   const w = deck[currentIdx];
-  if (w) speak(w.src, 'et-EE');
+  if (w) speak(cardFrontValue(w), cardFrontSpeechCode());
 }
 
 function speakBack() {
-  if (lang !== 'en') return; // ainult inglise režiimis
   const w = deck[currentIdx];
-  if (w) speak(w.tgt, 'en-GB');
+  if (w) speak(cardBackValue(w), cardBackSpeechCode());
 }
 
 // ── ANSWERS ────────────────────────────────────────────────────────────────
@@ -657,12 +691,18 @@ function know() {
   if (busy || currentIdx >= deck.length || !deck.length) return;
   busy = true;
   setBtns(false);
+  const src = deck[currentIdx].src;
+  const wasMastered = filter === 'mastered' && masteredKeys.includes(src);
   const doNext = () => {
-    markCorrect(deck[currentIdx].src);
-    history.push({ idx: currentIdx, result: 'know' });
+    if (wasMastered) {
+      history.push({ idx: currentIdx, result: 'know', wasMastered: true });
+    } else {
+      markCorrect(src);
+      history.push({ idx: currentIdx, result: 'know', wasMastered: false });
+      showToast('Tubli! ✓');
+    }
     knowCount++; currentIdx++;
     updateStats(); showCurrent();
-    showToast('Tubli! ✓');
   };
   flipThenWait(doNext);
 }
@@ -674,10 +714,16 @@ function dontKnow() {
   const src = deck[currentIdx].src;
   const wasInHard = hardKeys.includes(src);
   const wrongCountBefore = wrongCounts[src] || 0;
+  const wasMastered = filter === 'mastered' && masteredKeys.includes(src);
   const doNext = () => {
-    const movedToNeutral = markWrong(src);
-    if (movedToNeutral) showToast('3x ei tea — sõna läks tagasi "Kõik" alla 📚');
-    history.push({ idx: currentIdx, result: 'dont', wasInHard, wrongCountBefore });
+    if (wasMastered) {
+      moveMasteredWordToNeutral(src, 'Sõna läks tagasi "Kõik" alla 🔄');
+      history.push({ idx: currentIdx, result: 'dont', wasMastered: true, wasInHard: true, wrongCountBefore: 0 });
+    } else {
+      const movedToNeutral = markWrong(src);
+      if (movedToNeutral) showToast('3x ei tea — sõna läks tagasi "Kõik" alla 📚');
+      history.push({ idx: currentIdx, result: 'dont', wasMastered: false, wasInHard, wrongCountBefore });
+    }
     dontCount++; currentIdx++;
     updateStats(); showCurrent();
   };
@@ -689,13 +735,38 @@ function setBtns(on) {
   document.getElementById('btnDontKnow').disabled = !on;
 }
 
+function moveWordToMastered(src) {
+  masteredKeys = masteredKeys.includes(src) ? masteredKeys : [...masteredKeys, src];
+  easyKeys = easyKeys.filter(k => k !== src);
+  hardKeys = hardKeys.filter(k => k !== src);
+  counts[src] = MASTERED_CORRECT_THRESHOLD;
+  wrongCounts[src] = 0;
+  saveAll();
+  updateBadges();
+}
+
+function moveMasteredWordToNeutral(src, toastText) {
+  masteredKeys = masteredKeys.filter(k => k !== src);
+  hardKeys = hardKeys.filter(k => k !== src);
+  easyKeys = easyKeys.filter(k => k !== src);
+  counts[src] = 0;
+  wrongCounts[src] = 0;
+  saveAll();
+  updateBadges();
+  if (toastText) showToast(toastText);
+}
+
 function markCorrect(src) {
   wrongCounts[src] = 0;
   counts[src] = (counts[src] || 0) + 1;
-  if (counts[src] >= 3) {
+  if (counts[src] >= MASTERED_CORRECT_THRESHOLD) {
+    moveWordToMastered(src);
+    return;
+  }
+  if (counts[src] >= EASY_CORRECT_THRESHOLD) {
     if (!easyKeys.includes(src)) easyKeys.push(src);
     hardKeys = hardKeys.filter(k => k !== src);
-    counts[src] = 3;
+    masteredKeys = masteredKeys.filter(k => k !== src);
   }
   saveAll();
   updateBadges();
@@ -703,6 +774,10 @@ function markCorrect(src) {
 
 // Returns true if word was moved from hard back to neutral (3x wrong in hard)
 function markWrong(src) {
+  if (masteredKeys.includes(src)) {
+    moveMasteredWordToNeutral(src, 'Sõna läks tagasi "Kõik" alla 🔄');
+    return true;
+  }
   counts[src] = 0;
   if (hardKeys.includes(src)) {
     // Juba raskes: loenda kui palju kordi "ei tea" on vastatud
@@ -732,11 +807,11 @@ function flipThenWait(cb) {
     isFlipped = true;
     document.getElementById('cardInner').classList.add('flipped');
     setTimeout(() => {
-      if (soundOn() && lang === 'en') speak(deck[currentIdx]?.tgt, 'en-GB');
+      if (backSoundOn()) speak(cardBackValue(deck[currentIdx]), cardBackSpeechCode());
       startCountdown(cb);
     }, 540);
   } else {
-    if (soundOn() && lang === 'en') speak(deck[currentIdx]?.tgt, 'en-GB');
+    if (backSoundOn()) speak(cardBackValue(deck[currentIdx]), cardBackSpeechCode());
     startCountdown(cb);
   }
 }
@@ -768,22 +843,49 @@ function goBack() {
   if (prev.result === 'know') {
     knowCount = Math.max(0, knowCount - 1);
     const src = deck[prev.idx].src;
-    counts[src] = Math.max(0, (counts[src] || 1) - 1);
-    if (counts[src] < 3) easyKeys = easyKeys.filter(k => k !== src);
+    if (prev.wasMastered) {
+      masteredKeys = masteredKeys.includes(src) ? masteredKeys : [...masteredKeys, src];
+      hardKeys = hardKeys.filter(k => k !== src);
+      easyKeys = easyKeys.filter(k => k !== src);
+      counts[src] = MASTERED_CORRECT_THRESHOLD;
+    } else {
+      counts[src] = Math.max(0, (counts[src] || 1) - 1);
+      if (counts[src] >= MASTERED_CORRECT_THRESHOLD) {
+        if (!masteredKeys.includes(src)) masteredKeys.push(src);
+        easyKeys = easyKeys.filter(k => k !== src);
+        hardKeys = hardKeys.filter(k => k !== src);
+      } else {
+        masteredKeys = masteredKeys.filter(k => k !== src);
+        if (counts[src] >= EASY_CORRECT_THRESHOLD) {
+          if (!easyKeys.includes(src)) easyKeys.push(src);
+          hardKeys = hardKeys.filter(k => k !== src);
+        } else {
+          easyKeys = easyKeys.filter(k => k !== src);
+        }
+      }
+    }
     saveAll();
   }
   if (prev.result === 'dont') {
     dontCount = Math.max(0, dontCount - 1);
     const src = deck[prev.idx].src;
-    counts[src] = 0;
-    if (prev.wasInHard) {
-      // Sõna oli juba raskes: taasta wrongCounts ja vajadusel lisa tagasi rasketesse
-      wrongCounts[src] = prev.wrongCountBefore;
-      if (!hardKeys.includes(src)) hardKeys.push(src);
-    } else {
-      // Sõna polnud raskes: eemalda rasketest
+    if (prev.wasMastered) {
+      masteredKeys = masteredKeys.includes(src) ? masteredKeys : [...masteredKeys, src];
       hardKeys = hardKeys.filter(k => k !== src);
+      easyKeys = easyKeys.filter(k => k !== src);
+      counts[src] = MASTERED_CORRECT_THRESHOLD;
       wrongCounts[src] = 0;
+    } else {
+      counts[src] = 0;
+      if (prev.wasInHard) {
+        // Sõna oli juba raskes: taasta wrongCounts ja vajadusel lisa tagasi rasketesse
+        wrongCounts[src] = prev.wrongCountBefore;
+        if (!hardKeys.includes(src)) hardKeys.push(src);
+      } else {
+        // Sõna polnud raskes: eemalda rasketest
+        hardKeys = hardKeys.filter(k => k !== src);
+        wrongCounts[src] = 0;
+      }
     }
     saveAll();
   }
@@ -805,7 +907,7 @@ function toggleMic() {
   if (!SpeechRecognition) { showToast('Sinu brauser ei toeta mikrofoni!'); return; }
 
   recognition = new SpeechRecognition();
-  recognition.lang = lang === 'en' ? 'en-GB' : 'ru-RU';
+  recognition.lang = cardBackSpeechCode();
   recognition.interimResults = false;
   recognition.maxAlternatives = 5;
 
@@ -818,7 +920,7 @@ function toggleMic() {
 
   recognition.onresult = (e) => {
     const alts = Array.from(e.results[0]).map(a => a.transcript.trim().toLowerCase());
-    const correct = deck[currentIdx].tgt.toLowerCase().trim();
+    const correct = cardBackValue(deck[currentIdx]).toLowerCase().trim();
     const matched = alts.some(a => similarity(a, correct) > 0.75);
     stopMic();
     handleVoiceResult(matched, alts[0]);
@@ -848,6 +950,7 @@ function handleVoiceResult(correct, heard) {
   setBtns(false);
 
   const w = deck[currentIdx];
+  const wasMastered = filter === 'mastered' && masteredKeys.includes(w.src);
 
   // flip
   if (!isFlipped) {
@@ -857,21 +960,30 @@ function handleVoiceResult(correct, heard) {
 
   // show result overlay
   setTimeout(() => {
-    showVoiceResult(correct, heard, w.tgt);
-    if (soundOn() && lang === 'en') speak(w.tgt, 'en-GB');
+    showVoiceResult(correct, heard, cardBackValue(w));
+    if (backSoundOn()) speak(cardBackValue(w), cardBackSpeechCode());
 
     startCountdown(() => {
       hideVoiceResult();
       if (correct) {
-        markCorrect(w.src);
-        history.push({ idx: currentIdx, result: 'know' });
+        if (wasMastered) {
+          history.push({ idx: currentIdx, result: 'know', wasMastered: true });
+        } else {
+          markCorrect(w.src);
+          history.push({ idx: currentIdx, result: 'know', wasMastered: false });
+        }
         knowCount++;
       } else {
-        const wasInHard = hardKeys.includes(w.src);
-        const wrongCountBefore = wrongCounts[w.src] || 0;
-        const movedToNeutral = markWrong(w.src);
-        if (movedToNeutral) showToast('3x ei tea — sõna läks tagasi "Kõik" alla 📚');
-        history.push({ idx: currentIdx, result: 'dont', wasInHard, wrongCountBefore });
+        if (wasMastered) {
+          moveMasteredWordToNeutral(w.src, 'Sõna läks tagasi "Kõik" alla 🔄');
+          history.push({ idx: currentIdx, result: 'dont', wasMastered: true, wasInHard: true, wrongCountBefore: 0 });
+        } else {
+          const wasInHard = hardKeys.includes(w.src);
+          const wrongCountBefore = wrongCounts[w.src] || 0;
+          const movedToNeutral = markWrong(w.src);
+          if (movedToNeutral) showToast('3x ei tea — sõna läks tagasi "Kõik" alla 📚');
+          history.push({ idx: currentIdx, result: 'dont', wasMastered: false, wasInHard, wrongCountBefore });
+        }
         dontCount++;
       }
       currentIdx++;
@@ -976,10 +1088,12 @@ function updateStats() {
   const deckLeft = Math.max(0, deck.length - currentIdx);
   const hard = hardKeys.filter(k => words.find(w => w.src === k)).length;
   const easy = easyKeys.filter(k => words.find(w => w.src === k)).length;
-  const neutral = Math.max(0, words.length - hard - easy);
+  const mastered = masteredKeys.filter(k => words.find(w => w.src === k)).length;
+  const neutral = Math.max(0, words.length - hard - easy - mastered);
   let remaining = deckLeft;
   if (filter === 'easy') remaining = Math.min(deckLeft, easy);
   if (filter === 'hard') remaining = Math.min(deckLeft, hard);
+  if (filter === 'mastered') remaining = Math.min(deckLeft, mastered);
   if (filter === 'all')  remaining = Math.min(deckLeft, neutral);
   document.getElementById('statLeft').textContent  = remaining;
   document.getElementById('statKnow').textContent  = knowCount;
@@ -992,12 +1106,14 @@ function updateStats() {
 function updateBadges() {
   // Badge'id näitavad kategooriate koguseid — ei muutu kaarte kasutades
   // Muutuvad ainult kui sõna liigub kategooriasse (markCorrect/markWrong)
-  const hard    = hardKeys.filter(k => words.find(w => w.src === k)).length;
-  const easy    = easyKeys.filter(k => words.find(w => w.src === k)).length;
-  const neutral = Math.max(0, words.length - hard - easy);
-  document.getElementById('badgeAll').textContent  = neutral;
-  document.getElementById('badgeEasy').textContent = easy;
-  document.getElementById('badgeHard').textContent = hard;
+  const hard     = hardKeys.filter(k => words.find(w => w.src === k)).length;
+  const easy     = easyKeys.filter(k => words.find(w => w.src === k)).length;
+  const mastered = masteredKeys.filter(k => words.find(w => w.src === k)).length;
+  const neutral  = Math.max(0, words.length - hard - easy - mastered);
+  document.getElementById('badgeAll').textContent      = neutral;
+  document.getElementById('badgeEasy').textContent     = easy;
+  document.getElementById('badgeHard').textContent     = hard;
+  document.getElementById('badgeMastered').textContent = mastered;
 }
 
 function restartSession() { buildDeck(); }
@@ -1005,7 +1121,7 @@ function restartSession() { buildDeck(); }
 // ── MODAL ──────────────────────────────────────────────────────────────────
 function openModal() {
   document.getElementById('modalTitle').textContent =
-    lang === 'en' ? 'Eesti–Inglise sõnad' : 'Eesti–Vene sõnad';
+    lang === 'ru' || lang === 'ru-et' ? 'Eesti–Vene sõnad' : 'Eesti–Inglise sõnad';
   renderListAll(); renderListHard();
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -1039,9 +1155,10 @@ function switchTab(tab) {
 let singleDir = 'et'; // 'et' = top is Estonian; 'foreign' = top is foreign lang
 
 function updateSingleDirUI() {
-  const tgtName = lang === 'en' ? 'Inglise' : 'Vene';
-  const tgtFlag = lang === 'en' ? '🇬🇧' : '🇷🇺';
-  const isEtTop = singleDir === 'et';
+  const isRussian = lang === 'ru' || lang === 'ru-et';
+  const tgtName = isRussian ? 'Vene' : 'Inglise';
+  const tgtFlag = isRussian ? '🇷🇺' : '🇬🇧';
+  const isEtTop = isReversedDirection() ? singleDir !== 'et' : singleDir === 'et';
   document.getElementById('labelTop').textContent = isEtTop ? '🇪🇪 Eesti' : `${tgtFlag} ${tgtName}`;
   document.getElementById('labelBot').textContent = isEtTop ? `${tgtFlag} ${tgtName}` : '🇪🇪 Eesti';
   document.getElementById('singleInput').placeholder = isEtTop ? 'Eesti sõna või lause' : `${tgtName} sõna või lause`;
@@ -1067,8 +1184,9 @@ function addSingleManual() {
   const topVal = document.getElementById('singleInput').value.trim();
   const botVal = document.getElementById('singleTgt').value.trim();
   if (!topVal || !botVal) return;
-  const src = singleDir === 'et' ? topVal : botVal;
-  const tgt = singleDir === 'et' ? botVal : topVal;
+  const topIsEt = isReversedDirection() ? singleDir !== 'et' : singleDir === 'et';
+  const src = topIsEt ? topVal : botVal;
+  const tgt = topIsEt ? botVal : topVal;
   if (!words.find(w => w.src === src && w.tgt === tgt)) {
     words.push({ src, tgt });
     saveAll();
@@ -1092,8 +1210,9 @@ async function translateSingle() {
   btn.disabled = true;
   btn.textContent = '...';
 
-  const foreignCode = lang === 'en' ? 'en' : 'ru';
-  const langpair = singleDir === 'et' ? `et|${foreignCode}` : `${foreignCode}|et`;
+  const foreignCode = lang === 'ru' || lang === 'ru-et' ? 'ru' : 'en';
+  const topIsEt = isReversedDirection() ? singleDir !== 'et' : singleDir === 'et';
+  const langpair = topIsEt ? `et|${foreignCode}` : `${foreignCode}|et`;
 
   try {
     const resp = await fetch('https://api.mymemory.translated.net/get?' + new URLSearchParams({ q: word, langpair }));
@@ -1160,10 +1279,7 @@ function addBulk() {
 }
 
 // ── RENDER LISTS ───────────────────────────────────────────────────────────
-function esc(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function renderListAll() {
   const el = document.getElementById('wordListAll');
@@ -1178,6 +1294,7 @@ function renderListAll() {
           onblur="saveWordEdit(this)" onkeydown="if(event.key==='Enter')this.blur()">
         ${easyKeys.includes(w.src) ? '<span class="easy-badge">kerge</span>' : ''}
         ${hardKeys.includes(w.src) ? '<span class="hard-badge">raske</span>' : ''}
+        ${masteredKeys.includes(w.src) ? '<span class="mastered-badge">5x</span>' : ''}
       </div>
       <button class="btn-delete" onclick="removeWord(${i})">✕</button>
     </div>`).join('');
@@ -1196,6 +1313,7 @@ function saveWordEdit(input) {
   if (field === 'src' && newVal !== oldSrc) {
     if (hardKeys.includes(oldSrc)) { hardKeys = hardKeys.map(k => k === oldSrc ? newVal : k); }
     if (easyKeys.includes(oldSrc)) { easyKeys = easyKeys.map(k => k === oldSrc ? newVal : k); }
+    if (masteredKeys.includes(oldSrc)) { masteredKeys = masteredKeys.map(k => k === oldSrc ? newVal : k); }
     if (counts[oldSrc] !== undefined) { counts[newVal] = counts[oldSrc]; delete counts[oldSrc]; }
   }
 
@@ -1207,43 +1325,16 @@ function saveWordEdit(input) {
 function renderListHard() {
   const el = document.getElementById('wordListHard');
   const hard = words.filter(w => hardKeys.includes(w.src));
-  el.replaceChildren();
-  if (!hard.length) {
-    const empty = document.createElement('div');
-    empty.className = 'empty-list';
-    empty.textContent = 'Raskeid sõnu pole';
-    el.appendChild(empty);
-    return;
-  }
-
-  hard.forEach(w => {
-    const item = document.createElement('div');
-    item.className = 'word-item';
-
-    const pair = document.createElement('div');
-    pair.className = 'word-pair';
-
-    const src = document.createElement('span');
-    src.className = 'word-src';
-    src.textContent = w.src;
-
-    const separator = document.createElement('span');
-    separator.className = 'word-sep';
-    separator.textContent = '→';
-
-    const tgt = document.createElement('span');
-    tgt.className = 'word-tgt';
-    tgt.textContent = w.tgt;
-
-    const removeButton = document.createElement('button');
-    removeButton.className = 'btn-delete';
-    removeButton.textContent = '✕';
-    removeButton.addEventListener('click', () => removeHardWord(w.src));
-
-    pair.append(src, separator, tgt);
-    item.append(pair, removeButton);
-    el.appendChild(item);
-  });
+  if (!hard.length) { el.innerHTML = '<div class="empty-list">Raskeid sõnu pole</div>'; return; }
+  el.innerHTML = hard.map(w => `
+    <div class="word-item">
+      <div class="word-pair">
+        <span class="word-src">${esc(w.src)}</span>
+        <span class="word-sep">→</span>
+        <span class="word-tgt">${esc(w.tgt)}</span>
+      </div>
+      <button class="btn-delete" onclick="removeHardWord('${esc(w.src)}')">✕</button>
+    </div>`).join('');
 }
 
 function removeWord(i) {
@@ -1251,6 +1342,7 @@ function removeWord(i) {
   words.splice(i,1);
   hardKeys = hardKeys.filter(k => k !== src);
   easyKeys = easyKeys.filter(k => k !== src);
+  masteredKeys = masteredKeys.filter(k => k !== src);
   delete counts[src];
   saveAll(); renderListAll(); renderListHard(); updateBadges(); buildDeck();
 }
