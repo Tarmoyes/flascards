@@ -1279,7 +1279,10 @@ function addBulk() {
 }
 
 // ── RENDER LISTS ───────────────────────────────────────────────────────────
-function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function esc(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 
 function renderListAll() {
   const el = document.getElementById('wordListAll');
@@ -1325,16 +1328,43 @@ function saveWordEdit(input) {
 function renderListHard() {
   const el = document.getElementById('wordListHard');
   const hard = words.filter(w => hardKeys.includes(w.src));
-  if (!hard.length) { el.innerHTML = '<div class="empty-list">Raskeid sõnu pole</div>'; return; }
-  el.innerHTML = hard.map(w => `
-    <div class="word-item">
-      <div class="word-pair">
-        <span class="word-src">${esc(w.src)}</span>
-        <span class="word-sep">→</span>
-        <span class="word-tgt">${esc(w.tgt)}</span>
-      </div>
-      <button class="btn-delete" onclick="removeHardWord('${esc(w.src)}')">✕</button>
-    </div>`).join('');
+  el.replaceChildren();
+  if (!hard.length) {
+    const empty = document.createElement('div');
+    empty.className = 'empty-list';
+    empty.textContent = 'Raskeid sõnu pole';
+    el.appendChild(empty);
+    return;
+  }
+
+  hard.forEach(w => {
+    const item = document.createElement('div');
+    item.className = 'word-item';
+
+    const pair = document.createElement('div');
+    pair.className = 'word-pair';
+
+    const src = document.createElement('span');
+    src.className = 'word-src';
+    src.textContent = w.src;
+
+    const separator = document.createElement('span');
+    separator.className = 'word-sep';
+    separator.textContent = '→';
+
+    const tgt = document.createElement('span');
+    tgt.className = 'word-tgt';
+    tgt.textContent = w.tgt;
+
+    const removeButton = document.createElement('button');
+    removeButton.className = 'btn-delete';
+    removeButton.textContent = '✕';
+    removeButton.addEventListener('click', () => removeHardWord(w.src));
+
+    pair.append(src, separator, tgt);
+    item.append(pair, removeButton);
+    el.appendChild(item);
+  });
 }
 
 function removeWord(i) {
